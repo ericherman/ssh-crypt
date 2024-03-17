@@ -135,11 +135,11 @@ if $SC_ENCRYPT; then
 
 		EOF
 	fi
+	# https://en.wikipedia.org/wiki/PBKDF2
 	openssl aes-256-cbc \
 		-a \
 		-md sha512 \
 		-pbkdf2 \
-		-iter 1000000 \
 		-in   "$SC_FILE" \
 		-out  "$SC_FILE_BASE.enc" \
 		-pass "file:$SC_SYMMETRIC_KEY"
@@ -328,11 +328,11 @@ if $SC_DECRYPT; then
 
 		EOF
 	fi
+	# https://en.wikipedia.org/wiki/PBKDF2
 	openssl aes-256-cbc -d \
 		-a \
 		-md sha512 \
 		-pbkdf2 \
-		-iter 1000000 \
 		-in   "$SC_FILE" \
 		-out  "$SC_FILE_BASE" \
 		-pass "file:$SC_SYMMETRIC_KEY"
