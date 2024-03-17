@@ -323,7 +323,7 @@ if $SC_DECRYPT; then
 
 	if $SC_VERBOSE; then cat <<-EOF
 
-		Binary ecnrypted symmetric key is no longer needed
+		Binary encrypted symmetric key is no longer needed
 
 		EOF
 	fi
