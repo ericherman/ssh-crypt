@@ -98,9 +98,17 @@ if $SC_ENCRYPT; then
 	if $SC_VERBOSE; then cat <<-EOF
 
 		RSA cannot directly encrypt a piece of data which is larger
-		than the key size (elliptic curve and other asymmetric
-		encryption methods have similar size constraints),
-		thus we create a small one-time use symmetric key:
+		than the key size (elliptic curve and most other encryption
+		methods have similar size constraints) but openssl can do
+		"cipher block chaining" with a small key on the first block
+		and for each additional block using the results of the
+		previous block. Wikipedia has a resonable overview:
+
+		https://en.wikipedia.org/wiki/Cipher_block_chaining
+
+		As openssl does not directly support encrypting with the
+		recipients public key, a small one-time-use symmetric
+		key is created:
 
 			$SC_SYMMETRIC_KEY
 
@@ -153,8 +161,8 @@ if $SC_ENCRYPT; then
 		To encrypt the symmetric key using the recipient's SSH public
 		key, it must be in PEM format,
 		( https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail )
-		OpenSSH supports PEM format, but not what is typically found,
-		however we can convert the public key to PEM if needed
+		OpenSSH supports PEM format, but this is not what is typically
+		found, however we can convert the public key to PEM if needed
 
 		EOF
 	fi
