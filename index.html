@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
+<!-- Copyright (C) 2024 Eric Herman <eric@freesa.org> -->
+<html lang="en">
+<head>
+	<title>ssh-crypt</title>
+	<meta charset="UTF-8">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+	<script>
+		function fetch_and_convert_readme() {
+			fetch('README.md')
+				.then(response => response.text())
+				.then(markdown_content => {
+					const converter = new showdown.Converter();
+					const readme_html = converter.makeHtml(markdown_content);
+
+					document.getElementById('readme-content').innerHTML = readme_html;
+				})
+				.catch(error => console.error('Error fetch_and_convert_readme:', error));
+		}
+
+		window.onload = fetch_and_convert_readme;
+	</script>
+</head>
+<body>
+<div id="readme-content">loading README content ...</div>
+</body>
+</html>
