@@ -255,15 +255,32 @@ if $SC_DECRYPT; then
 			file  "$SC_PEM_KEY"
 		fi
 	else
+		SC_DESCRIBE_SHORT_LIVED_PASSPHRASE=1
+		if [ "_$SC_TMP_DECRYPT_SSH_KEYGEN_NO_PASSWORD" != "_" ] \
+		&& [ "$SC_TMP_DECRYPT_SSH_KEYGEN_NO_PASSWORD" -gt 0 ]; then
+			SC_DESCRIBE_SHORT_LIVED_PASSPHRASE=0
+			SC_TMP_DECRYPT_SSH_KEYGEN_EXTRA_OPTS=(-N "")
+		fi
 		cat <<-EOF
 
 		 The key file '$SC_KEY' is not in PEM format,
 		 creating a temporary PEM version.
 
-		 You will have to confirm the passphrase
-		 and create a passphrase for the temp version as well.
+		 Assuming the file has a passphrase,
+		 you will have to confirm the passphrase.
 
 		EOF
+
+		if [ $SC_DESCRIBE_SHORT_LIVED_PASSPHRASE -gt 0 ]; then
+		cat <<-EOF
+
+		 You will be prompted create a passphrase for the temporary
+		 PEM format version as well.
+
+		 (This very short-lived PEM version will be removed after use.)
+
+		EOF
+		fi
 
 		SC_KEY_BASE=$(basename "$SC_KEY")
 		SC_PEM_KEY_DIR=$(mktemp -d "/tmp/$USER.pem.XXXXXXXX")
@@ -272,7 +289,10 @@ if $SC_DECRYPT; then
 		SC_PEM_KEY="$SC_PEM_KEY_DIR/$SC_KEY_BASE"
 
 		cp -v "$SC_KEY" "$SC_PEM_KEY"
-		ssh-keygen -p -m PEM -f "$SC_PEM_KEY"
+
+		ssh-keygen -p -m PEM -f "$SC_PEM_KEY" \
+			"${SC_TMP_DECRYPT_SSH_KEYGEN_EXTRA_OPTS[@]}"
+
 		SC_TEMP_KEY_CREATED=true
 		ls -l "$SC_PEM_KEY"
 		file  "$SC_PEM_KEY"
